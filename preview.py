@@ -45,6 +45,7 @@ def richprev(clusters):
             yvals.append(y['y'])
 
         
-        plt.scatter(xvals,yvals, color=clrs[i])
+        plt.scatter(xvals,yvals, color=clrs[i], label=cluster['title'])
         i+=1
+    plt.legend(loc='upper left')
     plt.show()
