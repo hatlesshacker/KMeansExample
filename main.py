@@ -1,153 +1,130 @@
-import matplotlib.pyplot as plt
-import csv
-import random
+"""
+CHANGE LOG:
+>> 4th July 2021
+>> Optimised import statements
+>> Refactored and Reduced Code
+>> Edited README.md
+>> Removed:
+    - Global Booleans
+    - Debug Print statements
+    - Redundant Comments
+    - Redundant import statements
+    - Global list of Clusters and Points
+    - Dictionaries for Clusters and Points
+    - Number of Cluster and Points
+>> Added:
+    - Function comments
+    - Using mypy type checker added Type Hinting
+    - Every STEP comments in main->train() function
+    - List comprehensions and enumerate() to reduce code
+    - Initialized 'modules' folder to segregate all files
+    - Created 'auxiliary.py' to keep commonly used
+        - classes:
+            - BooleanVar -> to tackle global boolean variables
+            - Cluster -> to make Cluster Objects
+            - Point -> to make Point objects
+        - functions:
+            - s_down
+>> Renamed:
+    - Few variables using PEP 8 convention
+    - Few functions using PEP 8 convention
+    - 'ident.py' to identify.py
+"""
+import modules.clusters as ct
+import modules.identify as identify
+import modules.points as pt
+import modules.predict as predict
+import modules.preview as preview
+from modules.auxiliary import BooleanVar, Point, Cluster
 
-import points
-import ident
-import preview
-import clusters
-import predict
-
-glob_trained = False
-glob_named = False
-csvfile = ""
+# Globals
+trained = BooleanVar()
+named = BooleanVar()
+clusters: list[Cluster] = []
 
 glob_nos_clusters = 0
 glob_cluster_list = []
 
-glob_nos_points = 0
-glob_points_list = []
 
-
-# STEP 1: Obtain and register points globally
-# STEP 2: Create clusters and register them globally
+# STEP 1: Obtain points
+# STEP 2: Create clusters
 # STEP 3: Get next point to work on
 # STEP 4: Assign point to cluster
 # STEP 5: Update epicenters
-# STEP 6: Repeat 3 until epicenters don't change
+# STEP 6: Repeat STEP 3 until epicenters don't change
+# STEP 7: Finalize Clusters
 
+# To initialize and set Points to Clusters
+def train(csv: str) -> None:
+    points: list[Point] = pt.setup(pt.get_points(csv))  # STEP 1: Obtain points
+    no_clusters: int = int(input("\nEnter the number of clusters to clearly visualize in plot: "))
 
-def train(csvfile):
+    for n in range(no_clusters):  # STEP 2: Create clusters
+        clusters.append(Cluster(n + 1))
 
-    # STEP 1
-    global glob_points_list
-    global glob_nos_points
-    points_raw = points.getpoints(csvfile)
-    glob_points_list = points.setup(points_raw)
-    glob_nos_points = len(glob_points_list)
+    for _ in range(len(points) * 5):  # Run assignment
+        pt.assign_next(clusters, points)
+        ct.update_epicenter(clusters, points)
 
-    # STEP 2
-    global glob_nos_clusters
-    global glob_cluster_list
-
-    glob_cluster_list = []
-    glob_nos_clusters = 0
-
-    glob_nos_clusters = int(
-        input("\nEnter the number of clusters clearly visible in the plot: ")
-    )
-    for i in range(1, glob_nos_clusters + 1):
-        temp_dict = {}
-        temp_dict["epi_x"] = random.randint(1, 10)
-        temp_dict["epi_y"] = random.randint(1, 10)
-        temp_dict["points"] = []
-        temp_dict["title"] = i
-
-        glob_cluster_list.append(temp_dict)
-    # print("- Initialized ", glob_nos_clusters, " clusters")
-
-    # print ("INIT DEBUG \n")
-    # for k in glob_cluster_list:
-    #    print (k['epi_x'], k['epi_y'], end=" ")
-    #    print()
-
-    for l in range(glob_nos_points * 5):
-        # Run assignment
-        glob_points_list = points.nextassign(glob_cluster_list, glob_points_list)
-        glob_cluster_list = clusters.update_epi(glob_cluster_list, glob_points_list)
-
-    # STEP 3
-    while True:
-        prev_x = prev_y = 0
-        new_x = new_y = 0
-        change = 0
-
+    while True:  # STEP 3: Get next point to work on
         # record previous epicenters:
-        for i in glob_cluster_list:
-            prev_x += i["epi_x"]
-            prev_y += i["epi_y"]
+        prev_x = sum([cluster.epi_x for cluster in clusters])
+        prev_y = sum([cluster.epi_y for cluster in clusters])
 
-        # Run assignment
-        glob_points_list = points.nextassign(glob_cluster_list, glob_points_list)
-        glob_cluster_list = clusters.update_epi(glob_cluster_list, glob_points_list)
+        pt.assign_next(clusters, points)  # STEP 4: Assign point to cluster
+        ct.update_epicenter(clusters, points)  # STEP 5: Update epicenters
 
         # record new epicenters:
-        for j in glob_cluster_list:
-            new_x += j["epi_x"]
-            new_y += j["epi_y"]
+        new_x = sum([cluster.epi_x for cluster in clusters])
+        new_y = sum([cluster.epi_y for cluster in clusters])
 
-        change = abs(prev_x - new_x) + abs(prev_y - new_y)
-        if change == 0:
+        # STEP 6: Repeat STEP 3 until epicenters don't change
+        if abs(prev_x - new_x) + abs(prev_y - new_y) == 0:
             break
 
-    print("FIN DEBUG \n")
-    for k in glob_cluster_list:
-        print(k["epi_x"], k["epi_y"], end=" ")
-        print()
-    # print ("\n\nPOINTS:: ")
-    # for p in glob_points_list:
-    #    print(p)
-
-    glob_cluster_list = clusters.finalize(glob_cluster_list, glob_points_list)
+    ct.finalize(clusters, points)  # STEP 7: Finalize Clusters
 
     print("Hopefully, now the epicenters are correctly arranged")
-    global glob_trained
-    glob_trained = True
+    trained.set(True)
 
 
-print(" ** \n Welcome to KMeansExample.\n **\n")
-csvfile = input("Please enter the csv file containing the student records: ")
-# csvfile = 'data/simple.csv'
-print("Working on student records at ", csvfile, " ..")
+if __name__ == '__main__':
+    print(" ** \n Welcome to KMeansExample.\n **\n")
+    csv_file = input("Please enter the csv file containing the student records: ")  # 'data/simple.csv'
+    print(f"Working on student records at {csv_file}..")
+    while True:
+        print("\n  * (1) for previewing the records")
+        print("  * (2) for proceeding with training")
+        print("  * (3) for Exiting the predictor")
 
-while True:
-    print("\n\n")
-    print("  * (1) for previewing the records")
-    print("  * (2) for proceeding with training")
-    print("  * (3) for getting a prediction")
-    print("  * (4) for Exiting the predictor")
+        if trained.get():
+            print("  * (4) for Getting Prediction")
+            print("  * (5) for Rich preview")
+            print("  * (6) for Naming clusters")
+            print("  * (7) for Viewing points")
 
-    if glob_trained == True:
-        print("  * (5) for Rich preview")
-        print("  * (6) for Naming clusters")
-        print("  * (7) for Viewing points")
+        choice = int(input("Enter action: "))  # 2
 
-    i = int(input("Enter action: "))
+        if choice == 1:  # Previewing the records
+            preview.preview(csv_file)
 
-    if i == 1:
-        print("Previewing the records: ")
-        preview.preview(csvfile)
+        elif choice == 2:  # Training data
+            train(csv_file)
 
-    elif i == 2:
-        train(csvfile)
+        elif choice == 3:  # Exiting Program
+            break
 
-    elif i == 3:
-        predict.predict(glob_cluster_list)
+        elif choice == 4:  # Predict Cluster of Student
+            predict.predict(clusters)
 
-    elif i == 4:
-        break
+        elif choice == 5:  # Plots more detailed preview
+            preview.rich_preview(clusters)
 
-    elif i == 5:
-        pass
-        preview.richprev(glob_cluster_list)
+        elif choice == 6:  # Naming Clusters
+            identify.name_clusters(clusters, named.get())
+            named.set(True)
 
-    elif i == 6:
-        ret = ident.nameclusters(glob_cluster_list, glob_named)
-        glob_cluster_list = ret[0]
-        glob_named = ret[1]
-        print("Names set.")
+        elif choice == 7:  # Plots a basic View
+            pt.view(clusters)
 
-    elif i == 7:
-        points.view(glob_cluster_list)
-
-print("\nThank you for using the predictor! ")
+    print("\nThank you for using the predictor! ")
