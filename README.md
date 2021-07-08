@@ -1,5 +1,7 @@
 # KMeansExample
 
+    updated on: 8th July 2021 
+
 <a href="https://madewithlove.org.in" target="_blank">Made with <span style="color: #e74c3c">&hearts;</span> in
 India</a>
 
@@ -49,8 +51,8 @@ Working on student records at  data/test.csv  ..
 
 
 
-  * (1) for previewing the records
-  * (2) for proceeding with training
+  * (1) for Previewing the records
+  * (2) for Proceeding with training
   * (3) for Exiting the predictor
 Enter action: 
 
@@ -61,21 +63,29 @@ hereafter, the menu interface will guide you.
 ### Todos
 
 - Add GUI prompt while choosing CSV file from directory
+- Reduce and Optimise Code using Numpy
+- Display epicenters of Clusters in Rich Preview
 
 ### License
 
-- See [LICENCE]
+- See [LICENSE]
 
 ### ChangeLog
 
 - See [CHANGELOG]
 
-**Syed Nasim, 2020**
+### Preview
+- Rich plotting of Clusters in a dataset _students.csv_
+![Preview]
+
+**Syed Nasim, 2021**
 
 [matplotlib]: https://pypi.org/project/matplotlib/
 
 [python 3.x]: https://www.python.org/download/releases/3.0/
 
-[LICENCE]: LICENSE
+[LICENSE]: LICENSE
 
 [CHANGELOG]: CHANGELOG.md
+
+[Preview]: data/img/students.png
