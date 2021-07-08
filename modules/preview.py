@@ -1,5 +1,6 @@
 """ File for performing plotting operations in matplotlib"""
 import csv
+import itertools
 
 import matplotlib.pyplot as plt  # type: ignore
 
@@ -11,24 +12,20 @@ def preview(records_file: str) -> None:
     print("Previewing the records: ")
     x_val, y_val = [], []
     with open(records_file, newline="") as File:
-        for row in csv.reader(File):
-            x1, y1 = row[0], row[1]
-            if not (x1 == "" or y1 == ""):
-                x_val.append(x1)
-                y_val.append(y1)
+        for x, y in csv.reader(File):
+            if not (x == '' or y == ''):
+                x_val.append(int(x))
+                y_val.append(int(y))
     plt.scatter(x_val, y_val)
     plt.show()
 
 
-# Get tuple of colours
-def get_colors() -> tuple[str, ...]:
-    return "red", "blue", "green", "black"
-
-
 # To preview with colors and legend
 def rich_preview(clusters: list[Cluster]) -> None:
-    for color, cluster in zip(get_colors(), clusters):
+    colour = itertools.cycle(("red", "blue", "green", "black", "pink", "magenta", "yellow", "cyan", "darkgreen"))
+    for cluster in clusters:
         points = cluster.points
-        plt.scatter([point.x for point in points], [point.y for point in points], color=color, label=cluster.title)
+        plt.scatter([point.x for point in points], [point.y for point in points],
+                    color=next(colour), label=cluster.title)
     plt.legend(loc="upper left")
     plt.show()
