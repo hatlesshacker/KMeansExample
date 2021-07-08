@@ -1,35 +1,27 @@
 """
 CHANGE LOG:
->> 4th July 2021
->> Optimised import statements
->> Refactored and Reduced Code
->> Edited README.md
->> Removed:
-    - Global Booleans
-    - Debug Print statements
-    - Redundant Comments
-    - Redundant import statements
-    - Global list of Clusters and Points
-    - Dictionaries for Clusters and Points
-    - Number of Cluster and Points
->> Added:
-    - Function comments
-    - Using mypy type checker added Type Hinting
-    - Every STEP comments in main->train() function
-    - List comprehensions and enumerate() to reduce code
-    - Initialized 'modules' folder to segregate all files
-    - Created 'auxiliary.py' to keep commonly used
-        - classes:
-            - BooleanVar -> to tackle global boolean variables
-            - Cluster -> to make Cluster Objects
-            - Point -> to make Point objects
-        - functions:
-            - s_down
->> Renamed:
-    - Few variables using PEP 8 convention
-    - Few functions using PEP 8 convention
-    - 'ident.py' to identify.py
+- 8th July 2021
+- Tested with all files under data/
+- Fixed prediction functionality in clusters.py
+    -> HOW ?: Resolved some conflict of global and
+            local vars in update_epicenter
+    -> Removed s_down function and made minor changes
+- In auxiliary.py:
+    -> Renamed class var Points.cl to Point.cluster
+    -> Removed s_down function
+    -> Added __repr__() magic functions in 2 Classes
+- In points.py:
+    -> distance takes cluster and point directly to return distances
+    -> get_next directly returns Point instead of index of point
+    -> View now displays cluster contents before asking for user input
+- In predict.py:
+    -> Replaced use of s_down to f-string in predict function
+- In preview.py:
+    -> Fixed preview() function
+    -> Removed get_colours() and added itertools.cycle() iterator
+    -> Added few more colours to cycle through
 """
+
 import modules.clusters as ct
 import modules.identify as identify
 import modules.points as pt
@@ -41,9 +33,6 @@ from modules.auxiliary import BooleanVar, Point, Cluster
 trained = BooleanVar()
 named = BooleanVar()
 clusters: list[Cluster] = []
-
-glob_nos_clusters = 0
-glob_cluster_list = []
 
 
 # STEP 1: Obtain points
@@ -57,44 +46,43 @@ glob_cluster_list = []
 # To initialize and set Points to Clusters
 def train(csv: str) -> None:
     points: list[Point] = pt.setup(pt.get_points(csv))  # STEP 1: Obtain points
-    no_clusters: int = int(input("\nEnter the number of clusters to clearly visualize in plot: "))
+    no_clusters: int = int(input("\nEnter the number of clusters clearly visible in plot: "))
 
-    for n in range(no_clusters):  # STEP 2: Create clusters
-        clusters.append(Cluster(n + 1))
-
+    clusters.clear()
+    clusters.extend([Cluster(n + 1) for n in range(no_clusters)])  # STEP 2: Create clusters
     for _ in range(len(points) * 5):  # Run assignment
         pt.assign_next(clusters, points)
         ct.update_epicenter(clusters, points)
 
     while True:  # STEP 3: Get next point to work on
-        # record previous epicenters:
-        prev_x = sum([cluster.epi_x for cluster in clusters])
-        prev_y = sum([cluster.epi_y for cluster in clusters])
+        # record sum of previous epicenters:
+        pre_x = sum([cluster.epi_x for cluster in clusters])
+        pre_y = sum([cluster.epi_y for cluster in clusters])
 
         pt.assign_next(clusters, points)  # STEP 4: Assign point to cluster
         ct.update_epicenter(clusters, points)  # STEP 5: Update epicenters
 
-        # record new epicenters:
+        # record sum of new epicenters:
         new_x = sum([cluster.epi_x for cluster in clusters])
         new_y = sum([cluster.epi_y for cluster in clusters])
 
         # STEP 6: Repeat STEP 3 until epicenters don't change
-        if abs(prev_x - new_x) + abs(prev_y - new_y) == 0:
+        delta_xy = abs(pre_x - new_x) + abs(pre_y - new_y)
+        if delta_xy == 0:
             break
 
     ct.finalize(clusters, points)  # STEP 7: Finalize Clusters
-
     print("Hopefully, now the epicenters are correctly arranged")
     trained.set(True)
 
 
 if __name__ == '__main__':
     print(" ** \n Welcome to KMeansExample.\n **\n")
-    csv_file = input("Please enter the csv file containing the student records: ")  # 'data/simple.csv'
+    csv_file = input("Please enter the csv file containing the student records: ")
     print(f"Working on student records at {csv_file}..")
     while True:
-        print("\n  * (1) for previewing the records")
-        print("  * (2) for proceeding with training")
+        print("\n  * (1) for Previewing the records")
+        print("  * (2) for Proceeding with training")
         print("  * (3) for Exiting the predictor")
 
         if trained.get():
@@ -103,7 +91,7 @@ if __name__ == '__main__':
             print("  * (6) for Naming clusters")
             print("  * (7) for Viewing points")
 
-        choice = int(input("Enter action: "))  # 2
+        choice = int(input("Enter action: "))
 
         if choice == 1:  # Previewing the records
             preview.preview(csv_file)
