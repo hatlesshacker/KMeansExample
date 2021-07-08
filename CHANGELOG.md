@@ -1,6 +1,28 @@
-# CHANGE LOG
+# CHANGELOG
 
-    updated on: 4th July 2021 
+    updated on: 8th July 2021 
+
+### _8th July 2021_
+
+- Tested with all files under data/
+- Fixed prediction functionality in clusters.py
+  - HOW ?: Resolved some conflict of global and 
+           local vars in ```update_epicenter()``` 
+  - Removed ```s_down()``` and made minor changes
+- In auxiliary.py:
+  - Renamed class var Points.cl to Point.cluster
+  - Removed ```s_down()```
+  - Added ```__repr__()``` magic functions in 2 Classes
+- In points.py:
+  - distance takes cluster and point directly to return distances
+  - ```get_next()``` directly returns Point instead of index of point
+  - View now displays cluster contents before asking for user input
+- In predict.py:
+  - Replaced use of ```s_down()``` with f-string in predict function
+- In preview.py:
+  - Fixed ```preview()``` function
+  - Removed ```get_colours()``` and added ```itertools.cycle()``` iterator
+  - Added few more colours to cycle through
 
 ### _4th July 2021_
 
