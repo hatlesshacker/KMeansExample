@@ -6,11 +6,11 @@ from typing import Union
 
 # Class to initialize Cluster
 class Cluster:
-    def __init__(self, title: Union[str, int]) -> None:
-        self.title = title
-        self.points: list = []
-        self.epi_x: int = randint(1, 10)
-        self.epi_y: int = randint(1, 10)
+    def __init__(self, n: int) -> None:
+        self.title: str = f"Cluster {n}"
+        self.points: tuple = ()
+        self.epi_x: Union[int, float] = randint(1, 10)
+        self.epi_y: Union[int, float] = randint(1, 10)
 
     def __repr__(self):
         return f'({self.epi_x:.2f}, {self.epi_y:.2f})'
