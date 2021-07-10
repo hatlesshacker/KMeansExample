@@ -9,7 +9,7 @@
     <br>
     <a> <img src="https://img.shields.io/github/stars/warmachine028/KMeansExample?color=lawngreen"></a>
     <a href= "https://github.com/warmachine028/KMeansExample/tree/master/LICENSE"><img src="https://img.shields.io/github/license/warmachine028/KMeansExample?color=orange"></a>
-    <a href="https://github.com/warmachine028/KMeansExmaple/network/members"><img src="https://img.shields.io/github/forks/warmachine028/KMeansExample?color=cyan"></a>
+    <a href="https://github.com/warmachine028/KMeansExample/network/members"><img src="https://img.shields.io/github/forks/warmachine028/KMeansExample?color=cyan"></a>
 </div>
 
 # [KMeansExample](https://github.com/warmachine028/KMeansExample)
@@ -113,6 +113,6 @@ hereafter, the menu interface will guide you.
 
 [matplotlib]: https://pypi.org/project/matplotlib/
 [python 3.x]: https://www.python.org/download/releases/3.0/
-[license]: .github/LICENSE
-[changelog]: .github/CHANGELOG.md
+[license]: https://github.com/warmachine028/KMeansExample/tree/master/LICENSE
+[changelog]: https://github.com/warmachine028/KMeansExample/tree/master/.github/LICENSE
 [preview]: data/img/students.png
