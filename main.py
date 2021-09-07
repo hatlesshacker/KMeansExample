@@ -1,24 +1,36 @@
 """
 CHANGE LOG:
-- 10th July 2021
-- Minor changes in code
+- 7th September 2021
+- Major changes in code
 - Added:
-    -> tkinter GUI prompt for choosing csv files
-    -> Visualisation of Cluster epicenters
+    -> Bar Plot Visualization of number of points in each cluster
+    -> Pie Plot Visualization of Weightage of Clusters in overall
 
 - In main.py:
-    -> Increased assignment from 5 times to 7 times for better results
-    -> Removed 'csv' parameter from train()
-        as it's already globally available
-    -> Changed point list to tuple d-type for faster execution and reduce memory
-- In auxiliary.py
-    -> Changed Cluster points from mutable list to immutable tuple type
-       for better execution time and memory
-- In clusters.py
-    -> Replaced usage of get_points_cl to filter functions
-- In points.py
-    -> Replaced usage of math module with exponential operators
-    -> Removed get_points_cl function as it is deprecated now
+    -> 2 new menu functionalities of bar & pie plot
+    -> Added Notifications for Ongoing Training Process
+
+- In auxiliary.py:
+    -> Added a new @property in Cluster: epicenter() to return epicenter
+    -> Added a new @property in Points: coordinates() to return coordinate
+
+- In identify.py:
+    -> Added a prompt to retain previous Cluster title
+
+- In points.py:
+    -> inside view() function:
+        - Added prompt to return to main menu
+        - Added Error safety for IndexError in list
+        - Now Each Points of Cluster prints on new line
+
+- In previews.py:
+    -> Added Headings for each plots
+    -> Added a new generator to yield colors: fetch_colors()
+    -> Added 2 new functions to visualize data:
+        - bar_plot()
+        - pie_plot()
+
+
 """
 
 from tkinter import Tk
@@ -32,9 +44,9 @@ import modules.preview as preview
 from modules.auxiliary import BooleanVar, Point, Cluster
 
 # Globals
-trained = BooleanVar()
-named = BooleanVar()
-clusters: list[Cluster] = []
+TRAINED = BooleanVar()
+NAMED = BooleanVar()
+CLUSTERS: list[Cluster] = []
 
 
 # STEP 1: Obtain points
@@ -49,24 +61,24 @@ clusters: list[Cluster] = []
 def train() -> None:
     points: tuple[Point, ...] = pt.setup(pt.get_points(csv_file))  # STEP 1: Obtain points
     n_clusters: int = int(input("\nEnter the number of clusters clearly visible in plot: "))
-
-    clusters.clear()
-    clusters.extend([Cluster(n + 1) for n in range(n_clusters)])  # STEP 2: Create clusters
+    print("Please wait while the Training Process is ongoing...")
+    CLUSTERS.clear()
+    CLUSTERS.extend([Cluster(n + 1) for n in range(n_clusters)])  # STEP 2: Create clusters
     for _ in range(len(points) * 7):  # Run assignment
-        pt.assign_next(clusters, points)
-        ct.update_epicenter(clusters, points)
+        pt.assign_next(CLUSTERS, points)
+        ct.update_epicenter(CLUSTERS, points)
 
     while True:  # STEP 3: Get next point to work on
         # record sum of previous epicenters:
-        pre_x = sum(cluster.epi_x for cluster in clusters)
-        pre_y = sum(cluster.epi_y for cluster in clusters)
+        pre_x = sum(cluster.epi_x for cluster in CLUSTERS)
+        pre_y = sum(cluster.epi_y for cluster in CLUSTERS)
 
-        pt.assign_next(clusters, points)  # STEP 4: Assign point to cluster
-        ct.update_epicenter(clusters, points)  # STEP 5: Update epicenters
+        pt.assign_next(CLUSTERS, points)  # STEP 4: Assign point to cluster
+        ct.update_epicenter(CLUSTERS, points)  # STEP 5: Update epicenters
 
         # record sum of new epicenters:
-        new_x = sum(cluster.epi_x for cluster in clusters)
-        new_y = sum(cluster.epi_y for cluster in clusters)
+        new_x = sum(cluster.epi_x for cluster in CLUSTERS)
+        new_y = sum(cluster.epi_y for cluster in CLUSTERS)
 
         # STEP 6: Repeat STEP 3 until epicenters don't change
         delta_xy = abs(pre_x - new_x) + abs(pre_y - new_y)
@@ -74,9 +86,9 @@ def train() -> None:
             break
 
     # STEP 7: Finally assigning all points to clusters
-    ct.finalize(clusters, points)
-    print("Hopefully, now the epicenters are correctly arranged")
-    trained.set(True)
+    ct.finalize(CLUSTERS, points)
+    print("Hopefully, the new epicenters are correctly arranged")
+    TRAINED.set(True)
 
 
 if __name__ == '__main__':
@@ -91,15 +103,17 @@ if __name__ == '__main__':
         print("  * (2) for Proceeding with training")
         print("  * (3) for Exiting the predictor")
 
-        if trained.get():
+        if TRAINED.get():
             print("  * (4) for Getting Prediction")
             print("  * (5) for Rich preview")
             print("  * (6) for Naming clusters")
             print("  * (7) for Viewing points")
+            print("  * (8) for Bar plot visualization of Clusters")
+            print("  * (9) for Pie plot visualization of Clusters")
 
         choice = int(input("Enter action: "))
 
-        if choice == 1:  # Previewing the records
+        if choice == 1:  # Previewing the records - Plots a basic view
             preview.preview(csv_file)
 
         elif choice == 2:  # Training data
@@ -109,16 +123,25 @@ if __name__ == '__main__':
             break
 
         elif choice == 4:  # Predict Cluster of Student
-            predict.predict(clusters)
+            predict.predict(CLUSTERS)
 
         elif choice == 5:  # Plots more detailed preview
-            preview.rich_preview(clusters)
+            preview.rich_preview(CLUSTERS)
 
         elif choice == 6:  # Naming Clusters
-            identify.name_clusters(clusters, named.get())
-            named.set(True)
+            identify.name_clusters(CLUSTERS, NAMED.get())
+            NAMED.set(True)
 
         elif choice == 7:  # Plots a basic View
-            pt.view(clusters)
+            pt.view(CLUSTERS)
+
+        elif choice == 8:  # Plots a bar graph representation
+            preview.bar_plot(CLUSTERS)
+
+        elif choice == 9:  # Plots a pie chart representation
+            preview.pie_plot(CLUSTERS)
+
+        else:
+            print("This function is not available yet")
 
     print("\nThank you for using the predictor! ")
