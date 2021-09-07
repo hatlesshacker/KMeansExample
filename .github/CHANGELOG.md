@@ -1,6 +1,32 @@
 # CHANGELOG
 
-    updated on: 10th July 2021
+    updated on: 7th September 2021
+
+### _7th September 2021_
+
+- Major changes in code
+- Added:
+  - Bar Plot Visualization of number of points in each cluster
+  - Pie Plot Visualization of Weightage of Clusters in overall
+- In main.py:
+  - 2 new menu functionalities of bar & pie plot
+  - Added Notifications for Ongoing Training Process
+- In auxiliary.py:
+  - Added a new @property in Cluster: `epicenter()` to return epicenter
+  - Added a new @property in Points: `coordinates()` to return coordinate
+- In identify.py:
+  - Added a prompt to retain previous Cluster title
+- In points.py:
+  - Inside view() function:
+    - Added prompt to return to main menu
+    - Added Error safety for IndexError in list
+  - Now Each Points of Cluster prints on new line
+- In previews.py:
+  - Added Headings for each plots
+  - Added a new generator to yield colors: `fetch_colors()`
+  - Added 2 new functions to visualize data:
+    - `bar_plot()`
+    - `pie_plot()`
 
 ### _10th July 2021_
 
@@ -49,8 +75,8 @@
 - Added:
   - Function comments
   - Using mypy type checker added Type Hinting
-  - Every STEP comments in main -> train() function
-  - List comprehensions and enumerate() to reduce code
+  - Every STEP comments in main -> `train()` function
+  - List comprehensions and `enumerate()` to reduce code
   - Initialized 'modules' folder to segregate all files
   - Created 'auxiliary.py' to keep commonly used
     - classes:
