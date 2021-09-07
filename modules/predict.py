@@ -9,5 +9,5 @@ def predict(clusters: list[Cluster]) -> None:
     x = int(input("Enter Student's Marks: "))
 
     distances = [points.distance(cluster, Point(x, y)) for cluster in clusters]
-    for cluster, dist in zip(clusters, distances):
-        print(f"Probability for {cluster.title}: {1 - dist / sum(distances):.2%}")
+    for cluster, distance in zip(clusters, distances):
+        print(f"Probability for {cluster.title}: {1 - distance / sum(distances):.2%}")

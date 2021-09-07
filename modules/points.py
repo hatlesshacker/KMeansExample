@@ -8,26 +8,26 @@ from auxiliary import Cluster, Point
 
 # Returns distance between cluster and point
 def distance(cluster: Cluster, point: Point) -> float:
-    epi_x, epi_y = cluster.epi_x, cluster.epi_y
-    pt_x, pt_y = point.x, point.y
+    epi_x, epi_y = cluster.epicenter
+    pt_x, pt_y = point.coordinates
     return ((epi_x - pt_x) ** 2 + (epi_y - pt_y) ** 2) ** 0.5
 
 
 # Retrieves all points from csv file and returns the raw point list
 def get_points(filename: str) -> tuple[list[int], list[int]]:
-    x_val, y_val = [], []
-    with open(filename, newline="") as File:
-        for x, y in csv.reader(File):
-            if not (x == "" or y == ""):
-                x_val.append(int(x))
-                y_val.append(int(y))
+    x_values, y_values = [], []
+    with open(filename, newline="") as f:
+        for x, y in csv.reader(f):
+            if all((x, y)):
+                x_values.append(int(x))
+                y_values.append(int(y))
 
-    return x_val, y_val
+    return x_values, y_values
 
 
 # Takes raw points and returns properly set point list
 def setup(raw: tuple[list[int], list[int]]) -> tuple[Point, ...]:
-    return *(Point(x, y) for x, y in zip(raw[0], raw[1])),
+    return *(Point(x, y) for x, y in zip(*raw)),
 
 
 # Takes point list and returns next point to be worked on
@@ -50,7 +50,13 @@ def assign_next(clusters: list[Cluster], points: tuple[Point, ...]) -> None:
 # Previews Coordinates of epicenter and point in a cluster
 def view(clusters: list[Cluster]) -> None:
     for cluster in clusters:
-        print(f" - Cluster {cluster.title}: {cluster} has {len(cluster.points)} points.")
-    print()
-    cl: Cluster = clusters[int(input("Enter cluster no.: ")) - 1]
-    print(*cl.points, sep=', ')
+        print(f" - {cluster.title}: {cluster} has {len(cluster.points)} points.")
+    print('\nPress Enter to go back to previous Menu')
+    cluster_no = input("Enter cluster no.: ")
+    if not cluster_no or not cluster_no.isdigit():
+        return
+    if int(cluster_no) > len(clusters):
+        print("Invalid Cluster No. Cluster Doesn't exist")
+        return
+    cl: Cluster = clusters[int(cluster_no) - 1]
+    print(*cl.points, sep=',\n ')

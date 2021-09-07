@@ -8,9 +8,13 @@ from typing import Union
 class Cluster:
     def __init__(self, n: int) -> None:
         self.title: str = f"Cluster {n}"
-        self.points: tuple = ()
+        self.points: tuple['Point', ...] = ()
         self.epi_x: Union[int, float] = randint(1, 10)
         self.epi_y: Union[int, float] = randint(1, 10)
+
+    @property
+    def epicenter(self) -> tuple[Union[int, float], ...]:
+        return self.epi_x, self.epi_y
 
     def __repr__(self):
         return f'({self.epi_x:.2f}, {self.epi_y:.2f})'
@@ -22,6 +26,10 @@ class Point:
         self.x = x
         self.y = y
         self.cluster = cluster
+
+    @property
+    def coordinates(self) -> tuple[int, ...]:
+        return self.x, self.y
 
     def __repr__(self):
         return f'({self.x:.2f}, {self.y:.2f})'
