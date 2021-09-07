@@ -116,16 +116,16 @@ hereafter, the menu interface will guide you.
   Probability for Cluster 4: 67.50%
 ```
 
-- Rich plotting of Clusters
+- Rich plotting of Clusters  
   ![Preview]
 
-- Bar Chart Representation
+- Bar Chart Representation  
   ![bar_chart]
 
-- Pie Chart Representation
+- Pie Chart Representation  
   ![pie_chart]
 
-- Raw Data Records
+- Raw Data Records  
   ![raw_records]
 
 ## License
