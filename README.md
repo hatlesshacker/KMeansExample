@@ -138,7 +138,7 @@ hereafter, the menu interface will guide you.
 [python 3.x]: https://www.python.org/download/releases/3.0/
 [license]: https://github.com/warmachine028/KMeansExample/tree/master/LICENSE
 [changelog]: https://github.com/warmachine028/KMeansExample/tree/master/.github/CHANGELOG.md
-[raw_records]: data/img/basic_preview.png
-[preview]: data/img/scatter_plotting.png
-[bar_chart]: data/img/bar_plotting.png
-[pie_chart]: data/img/pie_plotting.png
+[raw_records]: data/img/Basic_Preview.png
+[preview]: data/img/Scatter_Plotting.png
+[bar_chart]: data/img/Bar_plotting.png
+[pie_chart]: data/img/Pie_plotting.png
